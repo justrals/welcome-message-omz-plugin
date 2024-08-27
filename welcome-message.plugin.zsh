@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Получаем ширину терминала
+# Getting terminal width
 term_width=$(tput cols)
 
-# Функция для центрирования текста
+# Text centering function
 center_text() {
     local text="$1"
     local color="$2"
@@ -12,27 +12,27 @@ center_text() {
     printf "%*s\e[%sm%s\e[0m\n" $padding "" "$color" "$text"
 }
 
-# Функция для вывода системной информации
+# Function to display system information
 print_system_info() {
-    # Цвета
-    os_color="34"       # Синий
-    kernel_color="32"   # Зеленый
-    uptime_color="33"   # Желтый
-    shell_color="35"    # Магента
-    resolution_color="36" # Голубой
-    cpu_color="31"      # Красный
+    # Colors
+    os_color="34"
+    kernel_color="32"
+    uptime_color="33"
+    shell_color="35"
+    resolution_color="36"
+    cpu_color="31"      
 
-    # Получение системной информации
+    # Getting system information
     os_info="OS: $(sw_vers -productName) $(sw_vers -productVersion)"
     kernel_info="Kernel: $(uname -r)"
     uptime_info="Uptime: $(uptime | awk -F'( |,|:)+' '{print $6" days, "$8" hours, "$9" mins"}')"
     shell_info="Shell: $($SHELL --version | head -n1)"
     cpu_info="CPU: $(sysctl -n machdep.cpu.brand_string)"
 
-    # Получение и обработка разрешений
+    # Getting and processing resolutions
     resolutions=$(system_profiler SPDisplaysDataType | grep "Resolution:" | awk '{print $2 " x " $4}' | head -n 2)
 
-    # Проверка, если разрешения были найдены и форматирование вывода
+    # Checking if resolutions were found and formatting output
     if [ -n "$resolutions" ]; then
         resolution_info="Main: $(echo "$resolutions" | head -n1)"
         if [ $(echo "$resolutions" | wc -l) -eq 2 ]; then
@@ -42,7 +42,7 @@ print_system_info() {
         resolution_info="Resolution data not available."
     fi
 
-    # Центрирование и вывод системной информации с цветом
+    # Centering and displaying system information with color
     center_text "$os_info" "$os_color"
     center_text "$kernel_info" "$kernel_color"
     center_text "$uptime_info" "$uptime_color"
@@ -51,17 +51,17 @@ print_system_info() {
     center_text "$cpu_info" "$cpu_color"
 }
 
-# Основной текст для figlet
+# Main text for figlet
 figlet_text="justrals"
 figlet_font="larry3d"
 
-# Создание текстового вывода с помощью figlet
+# Creating text output using figlet
 figlet_output=$(figlet -f "$figlet_font" "$figlet_text" | lolcat)
 
-# Центрирование и вывод текста figlet
+# Centering and displaying figlet text
 echo "$figlet_output" | while IFS= read -r line; do
     center_text "$line" ""
 done
 
-# Вызов функции для вывода системной информации
+# Function call for system info display
 print_system_info
